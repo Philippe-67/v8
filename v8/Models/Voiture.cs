@@ -7,6 +7,7 @@ namespace v8.Models
     {
         [Key]
         public int Id { get; set; }
+        [Range(1990, int.MaxValue, ErrorMessage = "Le champ Années doit être supérieur à 1990")]
         public int Annee { get; set; }
         public string Marque { get; set; }
         public string Modele { get; set; }
