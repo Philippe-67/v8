@@ -1,6 +1,7 @@
 ﻿
+using Microsoft.Graph.Models.TermStore;
 using System.ComponentModel.DataAnnotations;
-using System;
+
 namespace v8.Models
 {
     public class Voiture
@@ -16,5 +17,12 @@ namespace v8.Models
         public DateTime? DateVente { get; set; }
         public decimal? PrixAchat { get; set; }
         public decimal? PrixVente { get; set; }
+        public int VoitureId { get; set; }
+
+        public  ICollection<Reparation>Reparations{get; set; }
+        public ICollection<Intervention> Interventions { get; set; }
+
+          
+
     }
 }
