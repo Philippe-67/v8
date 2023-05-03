@@ -23,7 +23,7 @@ namespace v8.Controllers
         public async Task<IActionResult> Index()
         {
               return _context.Voiture != null ? 
-                          View(await _context.Voiture.ToListAsync()) :
+                          View(await _context.Voiture.Include(r=> r.ReparationInterventions).ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Voiture'  is null.");
         }
 

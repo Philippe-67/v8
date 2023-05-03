@@ -6,6 +6,8 @@ namespace v8.Models
 {
     public class Voiture
     {
+      //  internal readonly object ReparationIntervention;
+
         [Key]
         public int Id { get; set; }
         [Range(1990, int.MaxValue, ErrorMessage = "Le champ Années doit être supérieur à 1990")]
@@ -19,8 +21,8 @@ namespace v8.Models
         public decimal? PrixVente { get; set; }
         public int VoitureId { get; set; }
 
-        public  ICollection<Reparation>Reparations{get; set; }
-        public ICollection<Intervention> Interventions { get; set; }
+        public  ICollection<ReparationIntervention> ReparationInterventions { get; set; }
+       
 
           
 
