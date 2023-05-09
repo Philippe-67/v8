@@ -10,7 +10,6 @@ namespace v8.Models
         public string NomIntervention { get; set; }
         
         public decimal PrixIntervention { get; set; }
-        public ICollection<ReparationIntervention> ReparationInterventions { get; set; }
     }
 }
 

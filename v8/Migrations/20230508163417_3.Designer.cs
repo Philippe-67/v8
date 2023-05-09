@@ -9,11 +9,11 @@ using v8.Data;
 
 #nullable disable
 
-namespace v8.Data.Migrations
+namespace v8.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230430204330_migBtnVoiture")]
-    partial class migBtnVoiture
+    [Migration("20230508163417_3")]
+    partial class _3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -244,6 +244,32 @@ namespace v8.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Intervention");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NomIntervention = "Plaquette",
+                            PrixIntervention = 40m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            NomIntervention = "Courroie distribution",
+                            PrixIntervention = 120m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            NomIntervention = "Turbo",
+                            PrixIntervention = 250m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            NomIntervention = "Embrayage",
+                            PrixIntervention = 220m
+                        });
                 });
 
             modelBuilder.Entity("v8.Models.Reparation", b =>
@@ -264,27 +290,81 @@ namespace v8.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("VoitureId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("VoitureId");
+
                     b.ToTable("Reparation");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DateDisponibilite = new DateTime(2023, 5, 8, 18, 34, 17, 500, DateTimeKind.Local).AddTicks(6),
+                            DatePEC = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Courroie distribution + embrayage",
+                            VoitureId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DateDisponibilite = new DateTime(2023, 5, 10, 18, 34, 17, 500, DateTimeKind.Local).AddTicks(12),
+                            DatePEC = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Remplacement turbo + Plaquette",
+                            VoitureId = 1
+                        });
                 });
 
             modelBuilder.Entity("v8.Models.ReparationIntervention", b =>
                 {
-                    b.Property<int>("ReparationId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("InterventionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReparationInterventionId")
+                    b.Property<int>("ReparationId")
                         .HasColumnType("int");
 
-                    b.HasKey("ReparationId", "InterventionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("InterventionId");
 
-                    b.ToTable("ReparationIntervention");
+                    b.HasIndex("ReparationId");
+
+                    b.ToTable("ReparationInterventions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            InterventionId = 4,
+                            ReparationId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            InterventionId = 2,
+                            ReparationId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            InterventionId = 1,
+                            ReparationId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            InterventionId = 3,
+                            ReparationId = 2
+                        });
                 });
 
             modelBuilder.Entity("v8.Models.Voiture", b =>
@@ -325,6 +405,28 @@ namespace v8.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Voiture");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Annee = 2010,
+                            DateAchat = new DateTime(2023, 5, 8, 18, 34, 17, 499, DateTimeKind.Local).AddTicks(9871),
+                            Finition = "Sline",
+                            Marque = "Audi",
+                            Modele = "A3",
+                            PrixAchat = 12000m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Annee = 2015,
+                            DateAchat = new DateTime(2023, 5, 5, 18, 34, 17, 499, DateTimeKind.Local).AddTicks(9916),
+                            Finition = "M",
+                            Marque = "BMW",
+                            Modele = "Serie 3",
+                            PrixAchat = 18000m
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -378,16 +480,27 @@ namespace v8.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("v8.Models.Reparation", b =>
+                {
+                    b.HasOne("v8.Models.Voiture", "Voiture")
+                        .WithMany("Reparation")
+                        .HasForeignKey("VoitureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Voiture");
+                });
+
             modelBuilder.Entity("v8.Models.ReparationIntervention", b =>
                 {
                     b.HasOne("v8.Models.Intervention", "Intervention")
-                        .WithMany("ReparationInterventions")
+                        .WithMany()
                         .HasForeignKey("InterventionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("v8.Models.Reparation", "Reparation")
-                        .WithMany("ReparationInterventions")
+                        .WithMany()
                         .HasForeignKey("ReparationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -397,14 +510,9 @@ namespace v8.Data.Migrations
                     b.Navigation("Reparation");
                 });
 
-            modelBuilder.Entity("v8.Models.Intervention", b =>
+            modelBuilder.Entity("v8.Models.Voiture", b =>
                 {
-                    b.Navigation("ReparationInterventions");
-                });
-
-            modelBuilder.Entity("v8.Models.Reparation", b =>
-                {
-                    b.Navigation("ReparationInterventions");
+                    b.Navigation("Reparation");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using v8.Data;
 using v8.Models;
+using v8.Models.MappingData;
 
 namespace v8.Controllers
 {
@@ -22,9 +23,44 @@ namespace v8.Controllers
         // GET: Voitures
         public async Task<IActionResult> Index()
         {
-              return _context.Voiture != null ? 
-                          View(await _context.Voiture.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Voiture'  is null.");
+            var voitureList = await _context.Voiture.Include(v => v.Reparation).ToListAsync();
+            var reparationIntervention = await _context.ReparationInterventions.ToListAsync();
+            var interventions = await _context.Intervention.ToListAsync();
+
+
+            List<VoitureModel> voitureModels= new List<VoitureModel>();
+
+            foreach(var v in voitureList)
+            {
+                voitureModels.Add(new VoitureModel
+                {
+                    Voiture = new Voiture
+                    {
+                        Id = v.Id,
+                        Marque= v.Marque,
+                        Modele= v.Modele,          
+                        Annee= v.Annee,
+                        PrixAchat= v.PrixAchat,
+                        DateAchat = v.DateAchat,
+                        Finition= v.Finition,
+                    },
+                    Reparations = v.Reparation.Select(r => new Reparations
+                    {
+                        ReparationId = r.Id,
+                        Description= r.Description,
+                        Interventions =interventions
+                        .Where(i => reparationIntervention.Where(ri => ri.ReparationId.Equals(r.Id)).Select(ri => ri.InterventionId).Contains(i.Id))
+                        .Select(o => new InterventionDetail
+                        {
+                            Nom = o.NomIntervention,
+                            Prix = o.PrixIntervention
+                        })
+                        .ToList(),
+                    }).ToList()
+                });
+            }        
+
+            return View(voitureModels);
         }
 
         // GET: Voitures/Details/5

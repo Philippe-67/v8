@@ -1,4 +1,4 @@
-﻿@model IEnumerable<v8.Models.Voiture>
+﻿@model IEnumerable<v8.Models.MappingData.VoitureModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,66 +13,130 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Annee)
+                @Html.DisplayNameFor(model => model.Voiture.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Marque)
+                @Html.DisplayNameFor(model => model.Voiture.Marque)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Modele)
+                @Html.DisplayNameFor(model => model.Voiture.Modele)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Finition)
+                @Html.DisplayNameFor(model => model.Voiture.Finition)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateAchat)
+                @Html.DisplayNameFor(model => model.Voiture.DateAchat)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateVente)
+                @Html.DisplayNameFor(model => model.Voiture.DateVente)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PrixAchat)
+                @Html.DisplayNameFor(model => model.Voiture.PrixAchat)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PrixVente)
+                @Html.DisplayNameFor(model => model.Voiture.PrixVente)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Annee)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Marque)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Modele)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Finition)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateAchat)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateVente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrixAchat)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrixVente)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-        
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voiture.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voiture.Marque)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voiture.Modele)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voiture.Finition)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voiture.DateAchat)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voiture.DateVente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voiture.PrixAchat)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voiture.PrixVente)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Voiture.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Voiture.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Voiture.Id">Delete</a>
+                </td>
+            </tr>
+
+        }
     </tbody>
 </table>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Voiture
+            </th>
+            <th>
+                N° Réparation
+            </th>
+            <th>
+                Description Réparation
+            </th>
+            <th>
+                Interventions
+            </th>
+            <th>
+                Prix
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            <tr>
+                <td>
+                    @string.Concat(item.Voiture.Marque," ", item.Voiture.Modele)
+                </td>
+                <td>
+                    @foreach (var rep in item.Reparations)
+                    {
+                        @rep.ReparationId
+
+                    }
+                </td>
+                <td>
+                    @foreach (var rep in item.Reparations)
+                    {
+                        @rep.Description
+                    }
+                </td>
+                <td>
+                    @foreach (var rep in item.Reparations)
+                    {
+                        @foreach (var i in rep.Interventions)
+                        {
+                            @($"{i.Nom} (Prix: {i.Prix})");                        
+                            @Html.Raw("</br>");                            
+                        }
+                    }
+                </td>
+                <td>
+                    @foreach (var rep in item.Reparations)
+                    {
+                        @rep.Interventions.Sum(o => o.Prix);
+                    }
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+

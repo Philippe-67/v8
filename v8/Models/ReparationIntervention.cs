@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+
 namespace v8.Models
 {
     public class ReparationIntervention
     {
         [Key]
-        public int ReparationInterventionId { get; set; }
+        public int Id { get; set; }
+
         public int ReparationId { get; set; }
         public Reparation Reparation { get; set; }
 

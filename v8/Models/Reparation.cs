@@ -10,7 +10,9 @@ namespace v8.Models
         public string Description { get; set; }
        // public decimal Cout { get; set; }
         public DateTime? DateDisponibilite { get; set; }
-        public ICollection<ReparationIntervention> ReparationInterventions { get; set; }
+
+        public int VoitureId { get; set; }
+        public Voiture Voiture { get; set; }
     }
 }
 
